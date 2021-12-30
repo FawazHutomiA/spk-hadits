@@ -1,0 +1,89 @@
+<?php
+session_start();
+require "config.php";
+
+if(isset($_POST["submit"])){
+
+    $username=$_POST["username"];
+    $pass=md5($_POST["pass"]);
+
+    $sql = "SELECT*FROM users where username='$username' and pass='$pass'";
+    $result = mysqli_query($conn, $sql);
+    if (mysqli_num_rows($result) > 0) {
+        
+        $row = mysqli_fetch_assoc($result);
+
+        $_SESSION['username'] = $row["username"];
+        $_SESSION['nama'] = $row["nama"];
+        $_SESSION['level'] = $row["level"];
+        $_SESSION['last_activity'] = time();
+    
+        header("Location:?page=konsultasi");
+
+    } else {
+    ?>
+        <div class="alert alert-success" align="center">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Login Gagal</strong>
+        </div>
+    <?php
+    }
+}
+mysqli_close($conn);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>LOGIN</title>
+
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+</head>
+<body>
+
+<?php 
+if(isset($_GET['msg'])){
+    if($_GET['msg'] == "login_fail"){
+    ?>
+    <div class="alert alert-success" align="center">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Login Gagal</strong>
+    </div>
+    <?php
+    }       
+}
+?>
+
+<div class="container-fluid" style="margin-top:50px">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <form method="POST">
+                <div class="panel panel-default">
+                    <div class="panel-heading "><strong>LOGIN</strong></div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="">User Name</label>
+                            <input type="text" class="form-control" name="username" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Password</label>
+                            <input type="password" class="form-control" name="pass" autocomplete="off" required>
+                        </div>
+                        <input type="submit" class="btn btn-primary" name="submit" value="Submit">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery-3.3.1.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
